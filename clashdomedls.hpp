@@ -27,29 +27,49 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
 
         using contract::contract;
 
-        ACTION createduel(string state, string type, string game);
+        ACTION createduel(string state, string type, string game, asset fee);
+        ACTION updateelo(string game, name winner, name loser);
+        ACTION eraseall();
 
     private:
 
-        TABLE user {
-            string user; 
+        struct player_duel
+        {
+            name account;   // user wax account
+            uint64_t initial_timestamp;
+            uint64_t score; // user score
+        };
+
+        struct game_info {
+            string id; 
             uint64_t total_duels;  
             uint64_t wins;
             uint64_t loses;
             uint64_t MMR;
-            string primary_key() const { return user; }
         };
 
-        typedef multi_index<name("users"), user> users;
+        TABLE player {
+            name account;
+            vector<game_info> games;
+            uint64_t primary_key() const { return account.value; }
+        };
+
+        typedef multi_index<name("players"), player> players;
 
         TABLE duel {
-            uint64_t id; 
-            string state; // open || closed  
+            uint64_t id;
+            uint64_t timestamp; // duel creation time
             string type;  // public || private
+            string state;  // open || compromised || closed || claimed
             string game; // endless-siege, candy-fiesta, etc
+            asset fee; // entry fee for the duel
+            player_duel player1;
+            player_duel player2;
 
             uint64_t primary_key() const { return id; }
         };
 
         typedef multi_index<name("duels"), duel> duels;
+
+        uint64_t finder(vector<game_info> games, string id);
 };
