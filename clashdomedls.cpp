@@ -220,8 +220,8 @@ void clashdomedls::claim(uint64_t id, name account)
         game = "Candy Fiesta";
     }
 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 2 * 95 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 2 * 5 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 2 * 97.5 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 2 * 2.5 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
