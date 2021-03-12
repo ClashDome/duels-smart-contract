@@ -67,8 +67,9 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
         mod_duel.state = DuelState::CLOSED;
         mod_duel.player1.score = score2;
         mod_duel.player1.account = account2;
+        mod_duel.player1.data = "";
         mod_duel.player2.score = score;
-        mod_duel.player2.duration = score;
+        mod_duel.player2.duration = duration;
     });
 
     // update elo
@@ -220,8 +221,8 @@ void clashdomedls::claim(uint64_t id, name account)
         game = "Candy Fiesta";
     }
 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 2 * 97.5 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 2 * 2.5 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 195 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 5 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
