@@ -63,8 +63,11 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     check(dl_itr->state != DuelState::CLOSED, "Duel with id " + to_string(id) + " already closed!");
     check(dl_itr->player2.account == account, "Second player account mismatch!");
 
+    uint64_t timestamp = eosio::current_time_point().sec_since_epoch();
+
     _dl.modify(dl_itr, get_self(), [&](auto &mod_duel) {
         mod_duel.state = DuelState::CLOSED;
+        mod_duel.timestamp = timestamp;
         mod_duel.player1.score = score2;
         mod_duel.player1.account = account2;
         mod_duel.player1.data = "";
@@ -221,8 +224,8 @@ void clashdomedls::claim(uint64_t id, name account)
         game = "Candy Fiesta";
     }
 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 195 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 5 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 190 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
@@ -242,6 +245,20 @@ void clashdomedls::reopen(uint64_t id)
     _dl.modify(dl_itr, get_self(), [&](auto &mod_duel) {
         mod_duel.state = DuelState::OPEN;
         mod_duel.player2 = player;
+    });
+}
+
+void clashdomedls::transaction(uint64_t id, string transactionId)
+{
+    require_auth(_self);
+
+    duels _dl(CONTRACTN, CONTRACTN.value);
+
+    auto dl_itr = _dl.find(id);
+    check(dl_itr != _dl.end(), "Duel with id " + to_string(id) + " doesn't exists!");
+
+    _dl.modify(dl_itr, get_self(), [&](auto &mod_duel) {
+        mod_duel.transaction = transactionId;
     });
 }
 

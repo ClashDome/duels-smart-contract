@@ -116,6 +116,10 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "transaction",
+                    "type": "string"
+                },
+                {
                     "name": "fee",
                     "type": "asset"
                 },
@@ -219,6 +223,20 @@
             "name": "revomeall",
             "base": "",
             "fields": []
+        },
+        {
+            "name": "transaction",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "transactionId",
+                    "type": "string"
+                }
+            ]
         }
     ],
     "actions": [
@@ -255,6 +273,11 @@
         {
             "name": "revomeall",
             "type": "revomeall",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "transaction",
+            "type": "transaction",
             "ricardian_contract": ""
         }
     ],

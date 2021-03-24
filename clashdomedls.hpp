@@ -35,6 +35,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION claim(uint64_t id, name account);
         ACTION reopen(uint64_t id);
         ACTION remove(uint64_t id);
+        ACTION transaction(uint64_t id, string transactionId);
         ACTION revomeall();
 
     private:
@@ -70,6 +71,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
             uint64_t type;          // public 0 || private 1
             uint64_t state;         // open 0 || compromised 1 || closed 2 || claimed 3
             uint64_t game;          // endless-siege 0 || candy-fiesta 1 || ...
+            string transaction;
             asset fee;              // entry fee for the duel
             player_duel player1;
             player_duel player2;
