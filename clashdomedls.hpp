@@ -33,6 +33,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION compromise(uint64_t id, name account);
         ACTION close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2);
         ACTION claim(uint64_t id, name account);
+        ACTION forceClaim(uint64_t id);
         ACTION reopen(uint64_t id);
         ACTION remove(uint64_t id);
         ACTION transaction(uint64_t id, string transactionId);

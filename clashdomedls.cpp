@@ -186,13 +186,12 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
 
 void clashdomedls::claim(uint64_t id, name account)
 {
-
     require_auth(account);
 
     duels _dl(CONTRACTN, CONTRACTN.value);
 
     auto dl_itr = _dl.find(id);
-    check(dl_itr != _dl.end(), "Duel with id " + to_string(id) + " doesn't exists!");
+    check(dl_itr != _dl.end(), "Duel with id " + to_string(id) + " doesn't exist!");
     check(dl_itr->state != DuelState::CLAIMED, "Duel with id " + to_string(id) + " already claimed!");
     check(dl_itr->state == DuelState::CLOSED, "Duel with id " + to_string(id) + " can't be claimed yet!");
 
@@ -226,6 +225,48 @@ void clashdomedls::claim(uint64_t id, name account)
 
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 190 / 100, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
+}
+
+void clashdomedls::forceClaim(uint64_t id)
+{
+    require_auth(_self);
+
+    duels _dl(CONTRACTN, CONTRACTN.value);
+
+    auto dl_itr = _dl.find(id);
+
+    check(dl_itr != _dl.end(), "Duel with id " + to_string(id) + " doesn't exist!");
+    check(dl_itr->state == DuelState::CLOSED, "Duel with id " + to_string(id) + " can't be claimed!");
+
+    name winner;
+
+    if (dl_itr->player1.score > dl_itr->player2.score) {
+        winner = dl_itr->player1.account;
+    } else if (dl_itr->player2.score > dl_itr->player1.score) {
+        winner = dl_itr->player2.account;
+    } else {
+        if (dl_itr->player1.duration <= dl_itr->player2.duration) {
+            winner = dl_itr->player1.account;
+        } else {
+            winner = dl_itr->player2.account;
+        }
+    }
+
+    _dl.modify(dl_itr, get_self(), [&](auto &mod_duel) {
+        mod_duel.state = DuelState::CLAIMED;
+    });
+
+    string game = "";
+
+    if (dl_itr->game == GameType::ENDLESS_SIEGE) {
+        game = "Endless Siege";
+    } else if (dl_itr->game == GameType::CANDY_FIESTA) {
+        game = "Candy Fiesta";
+    }
+
+    // multiply by 1.9 instead of 190 / 100
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, winner, dl_itr->fee * 1.9, string(game + ". Duel id " + to_string(id) + " - Winner"))).send(); 
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 0.1, string(game + ". Duel id " + to_string(id) + " - Commission"))).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
