@@ -168,8 +168,8 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     uint64_t loserMMR = pl_itr_2->games.at(pos).MMR;
 
 
-    float p1 = 1.0 * 1.0 / (1.0 + 1.0 * pow(10, 1.0 * (loserMMR - winnerMMR) / 400)); 
-    float p2 = 1.0 * 1.0 / (1.0 + 1.0 * pow(10, 1.0 * (winnerMMR - loserMMR) / 400)); 
+    float p1 = 1.0 / (1.0 + pow(10.0, (loserMMR - winnerMMR) * 0.0025)); 
+    float p2 = 1.0 / (1.0 + pow(10.0, (winnerMMR - loserMMR) * 0.0025)); 
     uint64_t K = 30;
 
     winnerMMR = winnerMMR + K * (1.0 - p1);
