@@ -229,8 +229,8 @@ void clashdomedls::claim(uint64_t id, name account)
 
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, account, dl_itr->fee * 190 / 100, string(gameString + ". Duel id " + to_string(id) + " - Winner"))).send(); 
     // TODO: change this for production mode 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
-    // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
+    // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
 
     asset ludio;
     ludio.symbol = LUDIO_SYMBOL;
@@ -282,8 +282,8 @@ void clashdomedls::forceclaim(uint64_t id)
     // multiply by 1.9 instead of 190 / 100
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, winner, dl_itr->fee * 190 / 100, string(gameString + ". Duel id " + to_string(id) + " - Winner"))).send(); 
     // TODO: change this for production mode 
-    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
-    // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
+    // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
+    action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
 
     asset ludio;
     ludio.symbol = LUDIO_SYMBOL;
