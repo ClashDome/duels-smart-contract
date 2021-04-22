@@ -134,6 +134,16 @@
             ]
         },
         {
+            "name": "forceclaim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "game_info",
             "base": "",
             "fields": [
@@ -210,6 +220,11 @@
             ]
         },
         {
+            "name": "removeall",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "reopen",
             "base": "",
             "fields": [
@@ -220,9 +235,22 @@
             ]
         },
         {
-            "name": "revomeall",
+            "name": "setelo",
             "base": "",
-            "fields": []
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "game",
+                    "type": "uint64"
+                },
+                {
+                    "name": "value",
+                    "type": "uint64"
+                }
+            ]
         },
         {
             "name": "transaction",
@@ -261,8 +289,18 @@
             "ricardian_contract": ""
         },
         {
+            "name": "forceclaim",
+            "type": "forceclaim",
+            "ricardian_contract": ""
+        },
+        {
             "name": "remove",
             "type": "remove",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "removeall",
+            "type": "removeall",
             "ricardian_contract": ""
         },
         {
@@ -271,8 +309,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "revomeall",
-            "type": "revomeall",
+            "name": "setelo",
+            "type": "setelo",
             "ricardian_contract": ""
         },
         {

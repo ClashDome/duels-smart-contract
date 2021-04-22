@@ -33,10 +33,13 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION compromise(uint64_t id, name account);
         ACTION close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2);
         ACTION claim(uint64_t id, name account);
+        ACTION forceclaim(uint64_t id);
         ACTION reopen(uint64_t id);
         ACTION remove(uint64_t id);
         ACTION transaction(uint64_t id, string transactionId);
-        ACTION revomeall();
+        ACTION setelo(name account, uint64_t game, uint64_t value);
+        ACTION removeall();
+        [[eosio::on_notify("eosio.token::transfer")]] void transfer(const name &from, const name &to, const asset &quantity, const string &memo);
 
     private:
 
@@ -95,7 +98,10 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
 
         static constexpr name COMPANY_ACCOUNT = "gr.au.wam"_n;
         static constexpr name EOS_CONTRACT = "eosio.token"_n;
+        static constexpr name LUDIO_CONTRACT = "clashdometkn"_n;
         static constexpr symbol WAX_SYMBOL = symbol(symbol_code("WAX"), 8);
+        static constexpr symbol LUDIO_SYMBOL = symbol(symbol_code("LUDIO"), 4);
+        static constexpr int64_t WAX_TO_LUDIO_RATIO = 1;
 
         uint64_t finder(vector<game_info> games, uint64_t id);
 };
