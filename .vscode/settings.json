@@ -3,6 +3,7 @@
         "string": "cpp",
         "__locale": "cpp",
         "locale": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "string_view": "cpp"
     }
 }

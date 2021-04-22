@@ -134,6 +134,16 @@
             ]
         },
         {
+            "name": "forceclaim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "game_info",
             "base": "",
             "fields": [
@@ -210,6 +220,11 @@
             ]
         },
         {
+            "name": "removeall",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "reopen",
             "base": "",
             "fields": [
@@ -220,9 +235,18 @@
             ]
         },
         {
-            "name": "revomeall",
+            "name": "resetelo",
             "base": "",
-            "fields": []
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "game",
+                    "type": "uint64"
+                }
+            ]
         },
         {
             "name": "transaction",
@@ -261,8 +285,18 @@
             "ricardian_contract": ""
         },
         {
+            "name": "forceclaim",
+            "type": "forceclaim",
+            "ricardian_contract": ""
+        },
+        {
             "name": "remove",
             "type": "remove",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "removeall",
+            "type": "removeall",
             "ricardian_contract": ""
         },
         {
@@ -271,8 +305,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "revomeall",
-            "type": "revomeall",
+            "name": "resetelo",
+            "type": "resetelo",
             "ricardian_contract": ""
         },
         {
@@ -283,7 +317,7 @@
     ],
     "tables": [
         {
-            "name": "duels",
+            "name": "duels2",
             "type": "duel",
             "index_type": "i64",
             "key_names": [],
