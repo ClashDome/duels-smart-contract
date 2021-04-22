@@ -401,7 +401,7 @@ void clashdomedls::transfer(const name &from, const name &to, const asset &quant
 
     ludio.amount = quantity.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
 
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, from, ludio, string("Duel participation reward."))).send(); 
+    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, from, ludio, string("Duel participation Ludio reward."))).send(); 
 }
 
 uint64_t clashdomedls::finder(vector<game_info> games, uint64_t id)
