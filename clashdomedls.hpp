@@ -37,7 +37,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION reopen(uint64_t id);
         ACTION remove(uint64_t id);
         ACTION transaction(uint64_t id, string transactionId);
-        ACTION resetelo(name account, uint64_t game);
+        ACTION setelo(name account, uint64_t game, uint64_t value);
         ACTION removeall();
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(const name &from, const name &to, const asset &quantity, const string &memo);
 
@@ -101,6 +101,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         static constexpr name LUDIO_CONTRACT = "clashdometkn"_n;
         static constexpr symbol WAX_SYMBOL = symbol(symbol_code("WAX"), 8);
         static constexpr symbol LUDIO_SYMBOL = symbol(symbol_code("LUDIO"), 4);
+        static constexpr int64_t WAX_TO_LUDIO_RATIO = 1;
 
         uint64_t finder(vector<game_info> games, uint64_t id);
 };

@@ -235,7 +235,7 @@
             ]
         },
         {
-            "name": "resetelo",
+            "name": "setelo",
             "base": "",
             "fields": [
                 {
@@ -244,6 +244,10 @@
                 },
                 {
                     "name": "game",
+                    "type": "uint64"
+                },
+                {
+                    "name": "value",
                     "type": "uint64"
                 }
             ]
@@ -305,8 +309,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "resetelo",
-            "type": "resetelo",
+            "name": "setelo",
+            "type": "setelo",
             "ricardian_contract": ""
         },
         {
@@ -317,7 +321,7 @@
     ],
     "tables": [
         {
-            "name": "duels2",
+            "name": "duels",
             "type": "duel",
             "index_type": "i64",
             "key_names": [],
