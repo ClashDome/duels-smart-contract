@@ -29,6 +29,36 @@ void clashdomedls::create(uint64_t id, uint64_t type, uint64_t game, asset fee, 
     });
 }
 
+void clashdomedls::create2(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data, name account)
+{
+    require_auth(_self);
+
+    duels _dl(CONTRACTN, CONTRACTN.value);
+
+    auto dl_itr = _dl.find(id);
+    check(dl_itr == _dl.end(), "Duel with id " + to_string(id) + " already exist!");
+
+    checkPayments(game, fee, account);
+
+    uint64_t timestamp = eosio::current_time_point().sec_since_epoch();
+
+    player_duel player;
+
+    player.timestamp = timestamp;
+    player.duration = duration;
+    player.data = data;
+
+    _dl.emplace(CONTRACTN, [&](auto& new_duel) {
+        new_duel.id = id;
+        new_duel.timestamp = timestamp;
+        new_duel.state = DuelState::OPEN;
+        new_duel.type = type;
+        new_duel.game = game;
+        new_duel.fee = fee;
+        new_duel.player1 = player;
+    });
+}
+
 void clashdomedls::compromise(uint64_t id, name account)
 {
     require_auth(_self);
@@ -64,6 +94,8 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     check(dl_itr->state != DuelState::CLOSED, "Duel with id " + to_string(id) + " already closed!");
     check(dl_itr->state == DuelState::COMPROMISED, "Duel with id " + to_string(id) + " can't be closed!");
     check(dl_itr->player2.account == account, "Second player account mismatch!");
+
+    checkPayments(dl_itr->game, dl_itr->fee, account);
 
     uint64_t timestamp = eosio::current_time_point().sec_since_epoch();
 
@@ -402,6 +434,56 @@ void clashdomedls::transfer(const name &from, const name &to, const asset &quant
     ludio.amount = quantity.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
 
     action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, from, ludio, string("Duel participation Ludio reward."))).send(); 
+
+    payments _py(CONTRACTN, CONTRACTN.value);
+
+    uint64_t game = -1;
+
+    if (memo.find("Endless Siege") != string::npos) {
+        game = GameType::ENDLESS_SIEGE;
+    } else if (memo.find("Candy Fiesta") != string::npos) {
+        game = GameType::CANDY_FIESTA;
+    }
+
+    // TODO: enable this
+    check(game != -1, "Invalid payment memo.");
+
+    auto py_itr = _py.find(from.value);
+
+    // new user
+    if (py_itr == _py.end()) {
+
+        vector<asset> quantities;
+        quantities.push_back(quantity);
+
+        vector<payment_info> games;
+        games.push_back({ game, quantities});
+
+        _py.emplace(CONTRACTN, [&](auto& new_player) {
+            new_player.account = from;
+            new_player.games = games;
+        });
+    } else {
+
+        uint64_t pos = finder(py_itr->games, game);
+
+        // new game
+        if (pos == -1) {
+
+            vector<asset> quantities;
+            quantities.push_back(quantity);
+
+            _py.modify(py_itr, get_self(), [&](auto &mod_player) {
+                mod_player.games.push_back({game, quantities});
+            });
+
+        } else {
+
+            _py.modify(py_itr, get_self(), [&](auto &mod_player) {
+                mod_player.games.at(pos).quantities.push_back(quantity);
+            });
+        }
+    }
 }
 
 uint64_t clashdomedls::finder(vector<game_info> games, uint64_t id)
@@ -414,4 +496,47 @@ uint64_t clashdomedls::finder(vector<game_info> games, uint64_t id)
         }
     }
     return -1;
+}
+
+uint64_t clashdomedls::finder(vector<payment_info> games, uint64_t id)
+{
+    for (uint64_t i = 0; i < games.size(); i++)
+    {
+        if (games.at(i).id == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void clashdomedls::checkPayments(uint64_t game, asset fee, name account)
+{
+
+    payments _py(CONTRACTN, CONTRACTN.value);
+
+    auto py_itr = _py.find(account.value);
+
+    check(py_itr != _py.end(), "Entry fee not found.");
+
+    uint64_t pos = finder(py_itr->games, game);
+
+    check(pos != -1, "Entry fee not found.");
+
+    uint64_t count = -1;
+
+    for (uint64_t i = 0; i < py_itr->games.at(pos).quantities.size(); i++)
+    {
+        if (py_itr->games.at(pos).quantities.at(i) == fee)
+        {
+            count = i;
+            break;
+        }
+    }
+
+    check(count != -1, "Entry fee not found.");
+
+    _py.modify(py_itr, get_self(), [&](auto &mod_player) {
+        mod_player.games.at(pos).quantities.erase(mod_player.games.at(pos).quantities.begin() + count);
+    });
 }
