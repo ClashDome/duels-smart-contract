@@ -30,6 +30,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         using contract::contract;
 
         ACTION create(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data);
+        ACTION create2(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data, name account);
         ACTION compromise(uint64_t id, name account);
         ACTION close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2);
         ACTION claim(uint64_t id, name account);
@@ -43,15 +44,6 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
 
     private:
 
-        struct player_duel
-        {
-            name account;   // user wax account
-            uint64_t timestamp;
-            uint64_t duration;
-            uint64_t score; // user score
-            string data;
-        };
-
         struct game_info {
             uint64_t id; 
             uint64_t total_duels;  
@@ -63,10 +55,20 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         TABLE player {
             name account;
             vector<game_info> games;
+            
             uint64_t primary_key() const { return account.value; }
         };
 
         typedef multi_index<name("players"), player> players;
+
+        struct player_duel
+        {
+            name account;   // user wax account
+            uint64_t timestamp;
+            uint64_t duration;
+            uint64_t score; // user score
+            string data;
+        };
 
         TABLE duel {
             uint64_t id;
@@ -92,9 +94,22 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
             indexed_by<name("getsecond"), const_mem_fun<duel, uint64_t, &duel::getSecond>>>
         duels;
 
+        struct payment_info {
+            uint64_t id;
+            vector<asset> quantities;
+        };
+
+        TABLE payment {
+            name account;
+            vector<payment_info> games;
+
+            uint64_t primary_key() const { return account.value; }
+        };
+
+        typedef multi_index<name("payments"), payment> payments;
+
         enum DuelState {OPEN = 0, COMPROMISED, CLOSED, CLAIMED};
         enum GameType {ENDLESS_SIEGE = 0, CANDY_FIESTA};
-
 
         static constexpr name COMPANY_ACCOUNT = "gr.au.wam"_n;
         static constexpr name EOS_CONTRACT = "eosio.token"_n;
@@ -104,4 +119,6 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         static constexpr int64_t WAX_TO_LUDIO_RATIO = 1;
 
         uint64_t finder(vector<game_info> games, uint64_t id);
+        uint64_t finder(vector<payment_info> games, uint64_t id);
+        void checkPayments(uint64_t game, asset fee, name account);
 };

@@ -92,6 +92,40 @@
             ]
         },
         {
+            "name": "create2",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "type",
+                    "type": "uint64"
+                },
+                {
+                    "name": "game",
+                    "type": "uint64"
+                },
+                {
+                    "name": "fee",
+                    "type": "asset"
+                },
+                {
+                    "name": "duration",
+                    "type": "uint64"
+                },
+                {
+                    "name": "data",
+                    "type": "string"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "duel",
             "base": "",
             "fields": [
@@ -166,6 +200,34 @@
                 {
                     "name": "MMR",
                     "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "payment",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "games",
+                    "type": "payment_info[]"
+                }
+            ]
+        },
+        {
+            "name": "payment_info",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "quantities",
+                    "type": "asset[]"
                 }
             ]
         },
@@ -289,6 +351,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "create2",
+            "type": "create2",
+            "ricardian_contract": ""
+        },
+        {
             "name": "forceclaim",
             "type": "forceclaim",
             "ricardian_contract": ""
@@ -323,6 +390,13 @@
         {
             "name": "duels",
             "type": "duel",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "payments",
+            "type": "payment",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
