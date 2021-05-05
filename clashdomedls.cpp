@@ -517,54 +517,26 @@ void clashdomedls::checkPayments(uint64_t game, asset fee, name account)
 
     auto py_itr = _py.find(account.value);
 
-    // check(py_itr != _py.end(), "Entry fee not found.");
+    check(py_itr != _py.end(), "Entry fee not found.");
 
-    // uint64_t pos = finder(py_itr->games, game);
+    uint64_t pos = finder(py_itr->games, game);
 
-    // check(pos != -1, "Entry fee not found.");
+    check(pos != -1, "Entry fee not found.");
 
-    // uint64_t count = -1;
+    uint64_t count = -1;
 
-    // for (uint64_t i = 0; i < py_itr->games.at(pos).quantities.size(); i++)
-    // {
-    //     if (py_itr->games.at(pos).quantities.at(i) == fee)
-    //     {
-    //         count = i;
-    //         break;
-    //     }
-    // }
-
-    // check(count != -1, "Entry fee not found.");
-
-    // _py.modify(py_itr, get_self(), [&](auto &mod_player) {
-    //     mod_player.games.at(pos).quantities.erase(mod_player.games.at(pos).quantities.begin() + count);
-    // });
-
-    // TODO: remove this
-
-    if (py_itr != _py.end()) {
-
-        uint64_t pos = finder(py_itr->games, game);
-
-        if(pos != -1) {
-            uint64_t count = -1;
-
-            for (uint64_t i = 0; i < py_itr->games.at(pos).quantities.size(); i++)
-            {
-                if (py_itr->games.at(pos).quantities.at(i) == fee)
-                {
-                    count = i;
-                    break;
-                }
-            }
-            
-            if (count != -1) {
-                _py.modify(py_itr, get_self(), [&](auto &mod_player) {
-                    mod_player.games.at(pos).quantities.erase(mod_player.games.at(pos).quantities.begin() + count);
-                });
-            }   
+    for (uint64_t i = 0; i < py_itr->games.at(pos).quantities.size(); i++)
+    {
+        if (py_itr->games.at(pos).quantities.at(i) == fee)
+        {
+            count = i;
+            break;
         }
     }
 
-    
+    check(count != -1, "Entry fee not found.");
+
+    _py.modify(py_itr, get_self(), [&](auto &mod_player) {
+        mod_player.games.at(pos).quantities.erase(mod_player.games.at(pos).quantities.begin() + count);
+    });
 }
