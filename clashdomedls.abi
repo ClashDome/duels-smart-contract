@@ -204,6 +204,16 @@
             ]
         },
         {
+            "name": "logremove",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "payment",
             "base": "",
             "fields": [
@@ -358,6 +368,11 @@
         {
             "name": "forceclaim",
             "type": "forceclaim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "logremove",
+            "type": "logremove",
             "ricardian_contract": ""
         },
         {

@@ -40,6 +40,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION transaction(uint64_t id, string transactionId);
         ACTION setelo(name account, uint64_t game, uint64_t value);
         ACTION removeall();
+        ACTION logremove(uint64_t id);
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(const name &from, const name &to, const asset &quantity, const string &memo);
 
     private:

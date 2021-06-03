@@ -198,9 +198,8 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     uint64_t winnerMMR = pl_itr->games.at(pos).MMR;
 
     pl_itr_2 = _pl.find(loser.value);
-    pos = finder(pl_itr_2->games, game);
-    uint64_t loserMMR = pl_itr_2->games.at(pos).MMR;
-
+    uint64_t pos2 = finder(pl_itr_2->games, game);
+    uint64_t loserMMR = pl_itr_2->games.at(pos2).MMR;
 
     double p1 = 1.0 / (1.0 + pow(10.0, (loserMMR - winnerMMR) * 0.0025)); 
     double p2 = 1.0 - p1;
@@ -214,7 +213,7 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     });
 
     _pl.modify(pl_itr_2, get_self(), [&](auto &mod_player) {
-        mod_player.games.at(pos).MMR = loserMMR;
+        mod_player.games.at(pos2).MMR = loserMMR;
     });
 }
 
@@ -269,7 +268,15 @@ void clashdomedls::claim(uint64_t id, name account)
 
     ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
 
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, account, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send();  
+    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, account, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send(); 
+
+    // remove first duel 
+    auto dl_itr_rem = _dl.begin();
+
+    if (dl_itr_rem->state == DuelState::CLAIMED) {
+        _dl.erase(dl_itr_rem); 
+    }
+        
 }
 
 void clashdomedls::forceclaim(uint64_t id)
@@ -322,7 +329,23 @@ void clashdomedls::forceclaim(uint64_t id)
 
     ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
 
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, winner, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send();   
+    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, winner, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send();
+    
+    // remove first duel 
+    auto dl_itr_rem = _dl.begin();
+
+    if (dl_itr_rem->state == DuelState::CLAIMED) {
+        _dl.erase(dl_itr_rem); 
+    }
+
+    // action(
+    //     permission_level{get_self(), name("active")},
+    //     get_self(),
+    //     name("logremove"),
+    //     std::make_tuple(
+    //         dl_itr_rem->id
+    //     )
+    // ).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
@@ -412,6 +435,12 @@ void clashdomedls::removeall() {
     for (auto pl_itr = _pl.begin(); pl_itr != _pl.end();) {
         pl_itr = _pl.erase(pl_itr);
     }
+}
+
+void clashdomedls::logremove(
+    uint64_t id
+) {
+    require_auth(_self);
 }
 
 void clashdomedls::transfer(const name &from, const name &to, const asset &quantity, const string &memo)
