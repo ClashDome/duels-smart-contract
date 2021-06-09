@@ -208,6 +208,14 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     winnerMMR = winnerMMR + K * (1.0 - p1);
     loserMMR = loserMMR + K * (0.0 - p2);
 
+    if (winnerMMR > 5000) {
+        winnerMMR = 5000;
+    }
+
+    if (loserMMR > 5000) {
+        loserMMR = 5000;
+    }
+
     _pl.modify(pl_itr, get_self(), [&](auto &mod_player) {
         mod_player.games.at(pos).MMR = winnerMMR;
     });
