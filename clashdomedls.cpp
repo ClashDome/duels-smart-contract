@@ -345,15 +345,6 @@ void clashdomedls::forceclaim(uint64_t id)
     if (dl_itr_rem->state == DuelState::CLAIMED) {
         _dl.erase(dl_itr_rem); 
     }
-
-    // action(
-    //     permission_level{get_self(), name("active")},
-    //     get_self(),
-    //     name("logremove"),
-    //     std::make_tuple(
-    //         dl_itr_rem->id
-    //     )
-    // ).send();   
 }
 
 void clashdomedls::reopen(uint64_t id)
