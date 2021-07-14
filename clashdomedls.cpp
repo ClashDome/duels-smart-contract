@@ -29,8 +29,8 @@ void clashdomedls::create(uint64_t id, uint64_t type, uint64_t game, asset fee, 
     });
 }
 
-void clashdomedls::create2(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data, name account)
-{
+void clashdomedls::create2(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data, name account) {
+ 
     require_auth(_self);
 
     duels _dl(CONTRACTN, CONTRACTN.value);
@@ -59,8 +59,8 @@ void clashdomedls::create2(uint64_t id, uint64_t type, uint64_t game, asset fee,
     });
 }
 
-void clashdomedls::compromise(uint64_t id, name account)
-{
+void clashdomedls::compromise(uint64_t id, name account) {
+
     require_auth(_self);
 
     duels _dl(CONTRACTN, CONTRACTN.value);
@@ -83,8 +83,8 @@ void clashdomedls::compromise(uint64_t id, name account)
     });
 }
 
-void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2)
-{
+void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2) {
+
     require_auth(_self);
 
     duels _dl(CONTRACTN, CONTRACTN.value);
@@ -225,8 +225,8 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
     });
 }
 
-void clashdomedls::claim(uint64_t id, name account)
-{
+void clashdomedls::claim(uint64_t id, name account) {
+
     require_auth(account);
 
     duels _dl(CONTRACTN, CONTRACTN.value);
@@ -271,12 +271,14 @@ void clashdomedls::claim(uint64_t id, name account)
     // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
 
-    asset ludio;
-    ludio.symbol = LUDIO_SYMBOL;
-
-    ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
-
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, account, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send(); 
+    // TODO: remove this for Endless Siege
+    if (dl_itr->game == GameType::ENDLESS_SIEGE) {
+        asset ludio;
+        ludio.symbol = LUDIO_SYMBOL;
+        ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
+        
+        action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, account, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send(); 
+    }
 
     // remove first duel 
     auto dl_itr_rem = _dl.begin();
@@ -332,13 +334,15 @@ void clashdomedls::forceclaim(uint64_t id)
     // action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, "clashdometkn"_n, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
     action(permission_level{_self, "active"_n}, EOS_CONTRACT, "transfer"_n, make_tuple(_self, COMPANY_ACCOUNT, dl_itr->fee * 10 / 100, string(gameString + ". Duel id " + to_string(id) + " - Commission"))).send();  
 
-    asset ludio;
-    ludio.symbol = LUDIO_SYMBOL;
+    // TODO: REMOVE THIS FOR ENDLESS SIEGE
+    if (dl_itr->game == GameType::ENDLESS_SIEGE) {
+        asset ludio;
+        ludio.symbol = LUDIO_SYMBOL;
+        ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
 
-    ludio.amount = dl_itr->fee.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
+        action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, winner, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send();
+    }
 
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, winner, ludio, string(gameString + ". Duel id " + to_string(id) + " - Winner extra Ludio"))).send();
-    
     // remove first duel 
     auto dl_itr_rem = _dl.begin();
 
@@ -456,19 +460,19 @@ void clashdomedls::transfer(const name &from, const name &to, const asset &quant
     check(quantity.amount > 0, "only positive quantity allowed");
     check(quantity.symbol == WAX_SYMBOL, "only WAX tokens allowed");
 
-    asset ludio;
-    ludio.symbol = LUDIO_SYMBOL;
-
-    ludio.amount = quantity.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
-
-    action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, from, ludio, string("Duel participation Ludio reward."))).send(); 
-
     payments _py(CONTRACTN, CONTRACTN.value);
 
     uint64_t game = -1;
 
     if (memo.find("Endless Siege") != string::npos) {
         game = GameType::ENDLESS_SIEGE;
+        
+        asset ludio;
+        ludio.symbol = LUDIO_SYMBOL;
+        ludio.amount = quantity.amount * WAX_TO_LUDIO_RATIO * 0.0001; // decimal conversion LUDIO 4 decimals, WAX 8 decimals
+        
+        action(permission_level{_self, "active"_n}, LUDIO_CONTRACT, "transfer"_n, make_tuple(_self, from, ludio, string("Duel participation Ludio reward."))).send(); 
+
     } else if (memo.find("Candy Fiesta") != string::npos) {
         game = GameType::CANDY_FIESTA;
     }
