@@ -114,10 +114,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
 
         static constexpr name COMPANY_ACCOUNT = "gr.au.wam"_n;
         static constexpr name EOS_CONTRACT = "eosio.token"_n;
-        static constexpr name LUDIO_CONTRACT = "clashdometkn"_n;
         static constexpr symbol WAX_SYMBOL = symbol(symbol_code("WAX"), 8);
-        static constexpr symbol LUDIO_SYMBOL = symbol(symbol_code("LUDIO"), 4);
-        static constexpr int64_t WAX_TO_LUDIO_RATIO = 1;
 
         uint64_t finder(vector<game_info> games, uint64_t id);
         uint64_t finder(vector<payment_info> games, uint64_t id);
