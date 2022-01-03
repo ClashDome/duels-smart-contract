@@ -83,7 +83,7 @@ void clashdomedls::compromise(uint64_t id, name account) {
     });
 }
 
-void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2) {
+void clashdomedls::close(uint64_t id, name account, uint64_t score, bool citizen1, uint64_t duration, uint64_t score2, name account2, bool citizen2) {
 
     require_auth(_self);
 
@@ -130,6 +130,36 @@ void clashdomedls::close(uint64_t id, name account, uint64_t score, uint64_t dur
             loser = dl_itr->player1.account;
         }
     }
+
+    // WE GIVE CREDITS IN A RELATION 1 CREDIT: 1 WAX TO THE WINNER OF THE DUEL
+    if ((winner == account && citizen1) || (winner == account2 && citizen2)) {
+
+        string game_name;
+
+        if (game == ENDLESS_SIEGE) {
+            game_name = "endless-siege";
+        } else if (game == CANDY_FIESTA) {
+            game_name = "candy-fiesta";
+        } 
+
+        asset credits;
+        credits.symbol = CREDITS_SYMBOL;
+        credits.amount = dl_itr->fee.amount / 1e4;
+
+        vector<string> unclaimed_actions;
+        unclaimed_actions.push_back("{game: \"" + game_name + "\", type: \"victory\", credits: \" " + to_string(credits.amount / 1e4) + "  CREDITS\"}");
+        
+        action (
+            permission_level{get_self(), name("active")},
+            name("clashdomewld"),
+            name("addcredits2"),
+            std::make_tuple(
+                winner,
+                credits,
+                unclaimed_actions
+            )
+        ).send();
+    } 
 
     players _pl(CONTRACTN, CONTRACTN.value);
 

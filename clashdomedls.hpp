@@ -32,7 +32,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         ACTION create(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data);
         ACTION create2(uint64_t id, uint64_t type, uint64_t game, asset fee, uint64_t duration, string data, name account);
         ACTION compromise(uint64_t id, name account);
-        ACTION close(uint64_t id, name account, uint64_t score, uint64_t duration, uint64_t score2, name account2);
+        ACTION close(uint64_t id, name account, uint64_t score, bool citizen1, uint64_t duration, uint64_t score2, name account2, bool citizen2);
         ACTION claim(uint64_t id, name account);
         ACTION forceclaim(uint64_t id);
         ACTION reopen(uint64_t id);
