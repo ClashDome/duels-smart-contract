@@ -34,6 +34,10 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "citizen1",
+                    "type": "bool"
+                },
+                {
                     "name": "duration",
                     "type": "uint64"
                 },
@@ -44,6 +48,10 @@
                 {
                     "name": "account2",
                     "type": "name"
+                },
+                {
+                    "name": "citizen2",
+                    "type": "bool"
                 }
             ]
         },

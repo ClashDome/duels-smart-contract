@@ -115,6 +115,7 @@ class [[eosio::contract]] clashdomedls : public eosio::contract
         static constexpr name COMPANY_ACCOUNT = "gr.au.wam"_n;
         static constexpr name EOS_CONTRACT = "eosio.token"_n;
         static constexpr symbol WAX_SYMBOL = symbol(symbol_code("WAX"), 8);
+        static constexpr symbol CREDITS_SYMBOL = symbol(symbol_code("CREDITS"), 4);
 
         uint64_t finder(vector<game_info> games, uint64_t id);
         uint64_t finder(vector<payment_info> games, uint64_t id);
